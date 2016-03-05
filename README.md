@@ -24,6 +24,8 @@ The variables are honored to configure your instance:
 
 The plextidy.cnf file contains additional information on each variable.
 
+### Credits
+I'd like to thank https://gitlab.com/wjb/Plex-Free-Mem for the initial idea (No UNIX support).
 
 ### Issues
 
