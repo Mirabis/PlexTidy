@@ -1,13 +1,13 @@
 -----------------------------------------
-[![Build Status](https://travis-ci.org/Mirabis/plextidy.svg?branch=master)](https://travis-ci.org/Mirabis/plextidy)
-[![GitHub issues](https://img.shields.io/github/issues/Mirabis/plextidy.svg)](https://github.com/Mirabis/plextidy/issues)
-[![GitHub forks](https://img.shields.io/github/forks/Mirabis/plextidy.svg?style=flat-square)](https://github.com/Mirabis/plextidy/network)
+[![Build Status](https://travis-ci.org/Mirabis/PlexTidy.svg?branch=master)](https://travis-ci.org/Mirabis/PlexTidy)
+[![GitHub issues](https://img.shields.io/github/issues/Mirabis/PlexTidy.svg)](https://github.com/Mirabis/PlexTidy/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Mirabis/PlexTidy.svg?style=flat-square)](https://github.com/Mirabis/PlexTidy/network)
 -----------------------------------------
 # PlexTidy
 PlexTidy is a small python3 script to cleanup your transcode directory to allow processing on small (ram)disks.
 
 ## Using PlexTidy
-* Use it directly through Python3, visit the [GitHub Release!](/releases) page to download the script.
+* Use it directly through Python3, visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
 * Use it through PlexPy, as described in: `TODO`
 * Use my docker-image available at https://github.com/Mirabis/docker-plextidy 
 
