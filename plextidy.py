@@ -103,8 +103,8 @@ if __name__ == "__main__":
                     for file, _ in timestamps[:len(timestamps) // 2]:
                         del_file(file)
                         logger.info("Finished tidying up {0}".format(current_path))
-                if deployMode: # minimal impact?
-                    exit(0)
+            if deployMode: # minimal impact?
+                exit(0)
             else:
                 logger.debug("Entered waiting state, next run scheduled at: {0}",
                              (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
