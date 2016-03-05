@@ -11,6 +11,8 @@ import time
 from logging.handlers import RotatingFileHandler
 from operator import itemgetter
 
+import sys
+
 cfg = configparser.ConfigParser()
 try:
     cfg.read('/config/plextidy.cfg')
@@ -78,8 +80,9 @@ def eval_threshold(path:str,thresh:int) -> int:
 if __name__ == "__main__":
     try:
         threshold_exceeded = False
+        deployMode=os.getenv('TRAVIS',False)
         cfg_interval = int(cfg.get(section='TIDY', option='interval', fallback=120))
-        cfg_transcode_path = str(cfg.get(section='PATHS', option='transcode_path', fallback='/transcode'))
+        cfg_transcode_path = str(cfg.get(section='PATHS', option='transcode_path', fallback=os.path.curdir))
         cfg_threshold = int(cfg.get(section='TIDY', option='threshold', fallback=700))
         cfg_ext = str(cfg.get(section='TIDY', option='extension', fallback='.ts'))
         while True:
@@ -100,6 +103,8 @@ if __name__ == "__main__":
                     for file, _ in timestamps[:len(timestamps) // 2]:
                         del_file(file)
                         logger.info("Finished tidying up {0}".format(current_path))
+                if deployMode: # minimal impact?
+                    exit(0)
             else:
                 logger.debug("Entered waiting state, next run scheduled at: {0}",
                              (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
