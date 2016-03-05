@@ -1,0 +1,9 @@
+deploy:
+  provider: releases
+  api_key: $GITHUB_AUTO_RELEASE_TOKEN
+  file:
+    - 'plextidy.py'
+    - 'plextidy.cnf'
+  skip_cleanup: true
+  on:
+    tags: true
