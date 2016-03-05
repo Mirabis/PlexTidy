@@ -108,6 +108,6 @@ if __name__ == "__main__":
             else:
                 logger.debug("Entered waiting state, next run scheduled at: {0}",
                              (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
-                time.sleep(seconds=cfg_interval)
+                time.sleep(cfg_interval)
     finally:
         logger.info("PlexTidy terminated...")
