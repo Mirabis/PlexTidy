@@ -102,8 +102,7 @@ def tidy_disk():
                 del_file(file)
                 logger.info("Finished tidying up {0}".format(current_path))
     else:
-        logger.debug("Entered waiting state, next run scheduled at: {0}",
-                     (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
+        logger.debug("Entered waiting state, next run scheduled at: {0}".format((datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S")))
         time.sleep(cfg_interval)
 ####
 ## Main code
