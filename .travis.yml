@@ -5,8 +5,8 @@ python:
   - "3.3"
 
 script:
-  - mkdir transcode config logs defaults app data
-  - python plextidy.py
+  - mkdir transcode logs defaults app
+  - python plextidy.py -o true
 
 before_deploy: "echo 'ready?'"
 
