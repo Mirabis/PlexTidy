@@ -70,7 +70,7 @@ def transcode_files(path: str, ext: str):
     """Yield file names with specified file extension"""
     for entry in os.scandir(path):
         try:
-            if os.path.splitext(entry.name)[1] is ext:
+            if ext is "" or os.path.splitext(entry.name)[1] is ext:
                 yield entry
         except Exception as e:
             logger.error("Unable to inspect file at:{0} -- {1}".format(path, str(e)))
