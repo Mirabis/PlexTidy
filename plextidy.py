@@ -27,6 +27,7 @@ parser.add_argument('-f', '--file-extension', default='.ts', type=str,
 parser.add_argument('-l', '--log-level', default='WARNING', type=str,
                     help="Logging Level DEBUG, INFO, WARNING, ERROR (DEBUG is not advised)")
 parser.add_argument('-d', '--log-dir', default='.', type=str, help="Log directory (default script dir) for logrotating")
+parser.add_argument('-o', '--one-off', default=False, type=bool, help="Run only once, in-case you run from cron (default=false)")
 args = parser.parse_args()
 
 ####
@@ -82,7 +83,28 @@ def del_file(path: str):
     except Exception as e:
         logger.error("Unable to remove file at:{0} -- {1}".format(path, str(e)))
 
-
+def tidy_disk():
+    threshold_exceeded = eval_threshold(path=cfg_transcode_path, thresh=cfg_threshold)
+    if threshold_exceeded:
+        logger.info("Disk Threshold has been exceeded, starting cleanup...")
+        for dir in subdirs(cfg_transcode_path):
+            current_path = dir.path
+            timestamps = []
+            logger.info("Traversing {0} for garbage collection...".format(current_path))
+            for file in transcode_files(current_path, cfg_ext):
+                try:
+                    assert isinstance(file.stat, os.stat_result)
+                    timestamps.append((file.path, file.stat.st_mtime))
+                except Exception as e:
+                    logger.warning("Failed to access: {0}".format(str(e)))
+            timestamps.sort(key=itemgetter(1))
+            for file, _ in timestamps[:len(timestamps) // 2]:
+                del_file(file)
+                logger.info("Finished tidying up {0}".format(current_path))
+    else:
+        logger.debug("Entered waiting state, next run scheduled at: {0}",
+                     (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
+        time.sleep(cfg_interval)
 ####
 ## Main code
 ####
@@ -92,32 +114,20 @@ def eval_threshold(path: str, thresh: int) -> int:
 
 if __name__ == "__main__":
     try:
-        threshold_exceeded = False
+        threshold_exceeded=False
         cfg_interval = args.disk_interval
         cfg_transcode_path =  args.disk_path
         cfg_threshold =  args.disk_threshold
         cfg_ext = args.file_extension
-        while True:
-            threshold_exceeded = eval_threshold(path=cfg_transcode_path, thresh=cfg_threshold)
-            if threshold_exceeded:
-                logger.info("Disk Threshold has been exceeded, starting cleanup...")
-                for dir in subdirs(cfg_transcode_path):
-                    current_path = dir.path
-                    timestamps = []
-                    logger.info("Traversing {0} for garbage collection...".format(current_path))
-                    for file in transcode_files(current_path, cfg_ext):
-                        try:
-                            assert isinstance(file.stat, os.stat_result)
-                            timestamps.append((file.path, file.stat.st_mtime))
-                        except Exception as e:
-                            logger.warning("Failed to access: {0}".format(str(e)))
-                    timestamps.sort(key=itemgetter(1))
-                    for file, _ in timestamps[:len(timestamps) // 2]:
-                        del_file(file)
-                        logger.info("Finished tidying up {0}".format(current_path))
-            else:
-                logger.debug("Entered waiting state, next run scheduled at: {0}",
-                             (datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S"))
-                time.sleep(cfg_interval)
+        if args.one_off:
+            tidy_disk()
+            exit(0)
+        else:
+            while True:
+                tidy_disk()
+    except Exception as e:
+        logger.error("Error has occurred, INFO:{0}".format(str(e)))
+        exit(1)
     finally:
         logger.info("PlexTidy terminated...")
+

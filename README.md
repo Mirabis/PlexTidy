@@ -8,24 +8,27 @@ PlexTidy is a small python3 script to cleanup your transcode directory to allow 
 
 ## Using PlexTidy
 * Use it directly through Python3, visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
-* Use my docker-image available at https://github.com/Mirabis/docker-plextidy 
+* Use my docker-image available at https://github.com/Mirabis/docker-plextidy
 
-```shell
-$ python plextidy.py --log-level 'DEBUG' --disk-threshold 700 --disk-interval 60 --file-extension '.ts'
+```bash
 
+python3 plextidy.py [OPTIONS]
 
+```
 ### Configurable Options
 
 The variables are honored to configure your instance:
 
-* `GROUP_ID`	=	Unix Group ID (Default 1994)
-* `USER_ID`	=	Unix user id (Default 1994)
-* `LOG_LEVEL`	=	Logging Directory (Default DEBUG (can be INFO, WARNING, ERROR, DEBUG)
-* `DISK_THRESHOLD`	=	Disk full threshold (Default 700 (e.g. 70%))
-* `DISK_INTERVAL`	=	How often we should check the directory (Default 60s)
-* `FILE_EXTENSION`	=	File extension filter for plex transcode files (Default '.ts')
+* `-t, --disk-threshold`	=	Disk full threshold (Default 700 (e.g. 70%))
+* `-i,--disk-interval`	=	Period in seconds between disk threshold checks. The default interval is 60 seconds. Higher quality source media and a smaller disk size require more frequent threshold checks A higher disk threshold (speficied by the user) will also require more frequent checks;
+* `-p,--disk-path`	=	Path to the temporary working directory used by the Plex New Transcoder. The transcode_path can be modified from the Plex web through Settings -> Server -> General -> Advanced;
+* `-f,--file-extension`	=	The file extension used for transcoded segments;
+* `-l,--log-level`	=	Logging Level DEBUG, INFO, WARNING, ERROR (DEBUG is not advised);
+* `-d,--log-dir`	=	Log directory (default script dir) for logrotating.
+* `-o,--one-off`   = Run only once, in-case you run from cron (default=false)
 
-The plextidy.cnf file contains additional information on each variable.
+### Automation
+If you need help for additional configuration/automation/persistency please check my [Blog Post](https://mirabis.nl/development/docker-plextidy/)
 
 ### Credits
 I'd like to thank https://gitlab.com/wjb/Plex-Free-Mem for the initial idea (No UNIX support).
