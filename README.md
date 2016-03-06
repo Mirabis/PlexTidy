@@ -8,8 +8,11 @@ PlexTidy is a small python3 script to cleanup your transcode directory to allow 
 
 ## Using PlexTidy
 * Use it directly through Python3, visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
-* Use it through PlexPy, as described in: `TODO`
 * Use my docker-image available at https://github.com/Mirabis/docker-plextidy 
+
+```shell
+$ python plextidy.py --log-level 'DEBUG' --disk-threshold 700 --disk-interval 60 --file-extension '.ts'
+
 
 ### Configurable Options
 
