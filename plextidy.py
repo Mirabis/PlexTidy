@@ -83,7 +83,7 @@ def del_file(path: str):
     except Exception as e:
         logger.error("Unable to remove file at:{0} -- {1}".format(path, str(e)))
 
-def tidy_disk():
+def tidy_disk(sleep:bool):
     threshold_exceeded = eval_threshold(path=cfg_transcode_path, thresh=cfg_threshold)
     if threshold_exceeded:
         logger.info("Disk Threshold has been exceeded, starting cleanup...")
@@ -103,7 +103,8 @@ def tidy_disk():
                 logger.info("Finished tidying up {0}".format(current_path))
     else:
         logger.debug("Entered waiting state, next run scheduled at: {0}".format((datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S")))
-        time.sleep(cfg_interval)
+        if sleep:
+            time.sleep(cfg_interval)
 ####
 ## Main code
 ####
@@ -119,11 +120,11 @@ if __name__ == "__main__":
         cfg_threshold =  args.disk_threshold
         cfg_ext = args.file_extension
         if args.one_off:
-            tidy_disk()
+            tidy_disk(False)
             exit(0)
         else:
             while True:
-                tidy_disk()
+                tidy_disk(True)
     except Exception as e:
         logger.error("Error has occurred, INFO:{0}".format(str(e)))
         exit(1)
