@@ -26,7 +26,7 @@ interval is 60 seconds. Higher quality source media and a smaller disk size requ
 A higher disk threshold (speficied by the user) will also require more frequent checks")
 parser.add_argument('-p', '--disk-path', default='.', type=str, help="Path to the temporary working directory used by the \
 Plex New Transcoder. The transcode_path can be modified from the Plex web through Settings -> Server -> General -> Advanced.")
-parser.add_argument('-f', '--file-regex', default='((media-\d{5}.ts(?!tmp))|chunk-\d{5}(?!tmp))', type=str,
+parser.add_argument('-f', '--file-regex', default='(media-\d{5,7}\.ts(?!.)$)|(chunk-\d{5,7}(?!.)$)', type=str,
                     help="The temporary file regex (default should be fine)")
 parser.add_argument('-l', '--log-level', default='WARNING', type=str,
                     help="Logging Level DEBUG, INFO, WARNING, ERROR (DEBUG is not advised)")

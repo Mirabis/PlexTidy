@@ -7,7 +7,7 @@
 PlexTidy is a small python3 script to cleanup your transcode directory to allow processing on small (ram)disks.
 
 ## Using PlexTidy
-* Use it directly through Python3, visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
+* Use it directly through Python3(.5+), visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
 * Use my docker-image available at https://github.com/Mirabis/docker-plextidy (not working atm)
 
 ```bash
