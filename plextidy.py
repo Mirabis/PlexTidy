@@ -3,6 +3,10 @@ import logging
 import os
 import shutil
 import time
+try:
+    from os import scandir, walk
+except ImportError:
+    from scandir import scandir, walk
 
 ####
 ## Read config files etc
@@ -22,8 +26,8 @@ interval is 60 seconds. Higher quality source media and a smaller disk size requ
 A higher disk threshold (speficied by the user) will also require more frequent checks")
 parser.add_argument('-p', '--disk-path', default='.', type=str, help="Path to the temporary working directory used by the \
 Plex New Transcoder. The transcode_path can be modified from the Plex web through Settings -> Server -> General -> Advanced.")
-parser.add_argument('-f', '--file-extension', default='.ts', type=str,
-                    help="The file extension used for transcoded segments")
+parser.add_argument('-f', '--file-regex', default='((media-\d{5}.ts(?!tmp))|chunk-\d{5}(?!tmp))', type=str,
+                    help="The temporary file regex (default should be fine)")
 parser.add_argument('-l', '--log-level', default='WARNING', type=str,
                     help="Logging Level DEBUG, INFO, WARNING, ERROR (DEBUG is not advised)")
 parser.add_argument('-d', '--log-dir', default='.', type=str, help="Log directory (default script dir) for logrotating")
@@ -56,21 +60,27 @@ def get_free_disk_space(path: str):
 
 
 def get_disk_threshold(path: str):
-    return get_used_disk_space(path) / get_total_disk_space(path)
+    thr = get_used_disk_space(path) / get_total_disk_space(path)
+    logger.info("Current Threshold is: {0}".format(thr))
+    return thr
 
 
 def subdirs(path):
-    """Yield directory names not starting with '.' under given path."""
-    for entry in os.scandir(path):
+    """Yield directory names not starting with '.' under given path.
+    :rtype: DirEntry
+    """
+    for entry in scandir(path):
         if not entry.name.startswith('.') and entry.is_dir():
             yield entry
 
 
 def transcode_files(path: str, ext: str):
-    """Yield file names with specified file extension"""
-    for entry in os.scandir(path):
+    """Yield file names with specified file extension
+        :rtype: DirEntry"""
+    import re
+    for entry in scandir(path):
         try:
-            if ext is "" or os.path.splitext(entry.name)[1] is ext:
+            if bool(re.search(cfg_regex,str(entry.name))):
                 yield entry
         except Exception as e:
             logger.error("Unable to inspect file at:{0} -- {1}".format(path, str(e)))
@@ -88,19 +98,20 @@ def tidy_disk(sleep:bool):
     if threshold_exceeded:
         logger.info("Disk Threshold has been exceeded, starting cleanup...")
         for dir in subdirs(cfg_transcode_path):
-            current_path = dir.path
+            current_path = str(dir.path)
             timestamps = []
             logger.info("Traversing {0} for garbage collection...".format(current_path))
-            for file in transcode_files(current_path, cfg_ext):
+            for file in transcode_files(current_path, cfg_regex):
                 try:
-                    assert isinstance(file.stat, os.stat_result)
-                    timestamps.append((file.path, file.stat.st_mtime))
+                    m_time = file.stat().st_mtime
+                    #m_time = os.path.getmtime(str(file.path))
+                    timestamps.append((str(file.path), m_time))
                 except Exception as e:
-                    logger.warning("Failed to access: {0}".format(str(e)))
+                    logger.warning(str(e))
             timestamps.sort(key=itemgetter(1))
             for file, _ in timestamps[:len(timestamps) // 2]:
                 del_file(file)
-                logger.info("Finished tidying up {0}".format(current_path))
+            logger.info("Finished tidying up {0}".format(current_path))
     else:
         logger.debug("Entered waiting state, next run scheduled at: {0}".format((datetime.datetime.now() + datetime.timedelta(seconds=cfg_interval)).strftime("%H:%M:%S")))
         if sleep:
@@ -118,7 +129,7 @@ if __name__ == "__main__":
         cfg_interval = args.disk_interval
         cfg_transcode_path =  args.disk_path
         cfg_threshold =  args.disk_threshold
-        cfg_ext = args.file_extension
+        cfg_regex = args.file_regex
         if args.one_off:
             tidy_disk(False)
             exit(0)
