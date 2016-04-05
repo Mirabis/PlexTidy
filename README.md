@@ -8,11 +8,10 @@ PlexTidy is a small python3 script to cleanup your transcode directory to allow 
 
 ## Using PlexTidy
 * Use it directly through Python3(.5+), visit the [GitHub Release!](https://github.com/Mirabis/PlexTidy/releases) page to download the script.
-* Use my docker-image available at https://github.com/Mirabis/docker-plextidy (not working atm)
 
 ```bash
 pip3 install scandir --upgrade
-*/1 * * * * python3 plextidy.py [OPTIONS]
+*/1 * * * * python3 plextidy.py -o [OPTIONS]
 
 ```
 ### Configurable Options
@@ -28,7 +27,7 @@ The variables are honored to configure your instance:
 * `-o,--one-off`   = Run only once, in-case you run from cron (default=false)
 
 ### Automation
-If you need help for additional configuration/automation/persistency please check my [Blog Post](https://mirabis.nl/development/docker-plextidy/)
+If you need help for additional configuration/automation/persistency please check my [Blog Post](https://mirabis.nl/docker-plextidy/)
 
 ### Credits
 I'd like to thank https://gitlab.com/wjb/Plex-Free-Mem for the initial idea (No UNIX support).
